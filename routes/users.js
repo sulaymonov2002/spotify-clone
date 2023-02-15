@@ -1,6 +1,9 @@
 const router = require("express").Router();
 const { User, validate } = require("../models/user");
 const bcrypt = require("bcrypt");
+const auth = require("../middleware/admin");
+const valid = require("../middleware/validObjectId");
+const validObjectId = require("../middleware/validObjectId");
 
 // create user
 router.post("/", async (req, res) => {
@@ -26,6 +29,19 @@ router.post("/", async (req, res) => {
   res
     .status(200)
     .send({ data: newUser, message: "Account created successfully" });
+});
+
+// get all users
+router.get("/", admin, async (req, res) => {
+  const users = await User.find().select("-password - _v");
+  res.status(200).send({ data: users });
+});
+
+/// get user by id
+
+router.get("/:id", [validObjectId, auth], async (req, res) => {
+  const user = await User.findById(req.params.id).select("-password -_v");
+  req.status(200).send({ data: user });
 });
 
 module.exports = router;
