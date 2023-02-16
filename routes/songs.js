@@ -19,3 +19,7 @@ router.get("/", async (req, res) => {
   res.status(200).send({ data: songs });
 });
 
+// update song
+router.put("/:id", [validObjectId, admin], async (req, res) => {
+  const song = await Song.find;
+});
