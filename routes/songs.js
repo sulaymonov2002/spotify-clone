@@ -13,5 +13,9 @@ router.post("/", admin, async (req, res) => {
   res.status(201).send({ data: song, message: "Song created successfully" });
 });
 
-
 // get all songs
+router.get("/", async (req, res) => {
+  const songs = await Song.find();
+  res.status(200).send({ data: songs });
+});
+
