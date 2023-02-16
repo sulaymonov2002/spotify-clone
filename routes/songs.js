@@ -3,6 +3,7 @@ const { User } = require("../models/song");
 const { Song, validate } = require("../models/song");
 const auth = require("../middleware/admin");
 const admin = require("../middleware/validObjectId");
+const validObjectId = require("../middleware/validObjectId");
 
 // create song
 router.post("/", admin, async (req, res) => {
@@ -21,5 +22,8 @@ router.get("/", async (req, res) => {
 
 // update song
 router.put("/:id", [validObjectId, admin], async (req, res) => {
-  const song = await Song.find;
+  const song = await Song.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+  });
+  res.send({ data: song, message: "Updated song successfully" });
 });
