@@ -47,5 +47,16 @@ router.put("/like/:id", [validObjectId, auth], async (req, res) => {
     resMessage = "Added to your liked songs";
   } else {
     user.likedSongs.splice(index, 1);
+    resMessage = "Removed from your liked songs";
   }
+  res.status(200).send({ message: resMessage });
 });
+
+// get all like songs
+router.get("/like", auth, async (req, res) => {
+  const user = await User.findById(req.user._id);
+  const songs = await Song.findById(req.user._id);
+  res.status(200).send({ data: songs });
+});
+
+module.exports = router;
