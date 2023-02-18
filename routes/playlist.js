@@ -20,4 +20,15 @@ router.post("/", auth, async (req, res) => {
   res.status(201).send({ data: playlist });
 });
 
+// edit playlist by id
+router.put("/edit/:id", [validObjectId, auth], async (req, res) => {
+  const schema = Joi.object({
+    name: Joi.string().require(),
+    desc: Joi.string().allow(""),
+    img: Joi.string().allow(""),
+  });
+  const { error } = schema.validate(req.body);
+  if (error) return res.status(400).send({ message: error.details[0].message });
+});
+
 module.exports = router;
