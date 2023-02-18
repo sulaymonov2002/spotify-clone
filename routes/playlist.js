@@ -54,7 +54,13 @@ router.put("/add-song", auth, async (req, res) => {
   });
 
   const { error } = schema.validate(req.body);
-  if (error) return res.status(400).send({ message: error.details });
+  if (error) return res.status(400).send({ message: error.details[0] });
+
+  const user = await User.findById(req.user._id);
+  const playlist = await Playlist.findById(req.body.playlistId);
+
+  if (!user._id.equals(playlist.user))
+    return res.status(403).send({ message: "User don't have access to add" });
 });
 
 module.exports = router;
