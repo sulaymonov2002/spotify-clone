@@ -46,6 +46,15 @@ router.put("/edit/:id", [validObjectId, auth], async (req, res) => {
   res.status(200).send({ message: "Updated successfully" });
 });
 
-// add song tp playlist 
+// add song to playlist
+router.put("/add-song", auth, async (req, res) => {
+  const schema = Joi.object({
+    playlistId: Joi.string().required(),
+    songId: Joi.string().required(),
+  });
+
+  const { error } = schema.validate(req.body);
+  if (error) return res.status(400).send({ message: error.details });
+});
 
 module.exports = router;
