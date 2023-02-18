@@ -27,8 +27,25 @@ router.put("/edit/:id", [validObjectId, auth], async (req, res) => {
     desc: Joi.string().allow(""),
     img: Joi.string().allow(""),
   });
+
   const { error } = schema.validate(req.body);
   if (error) return res.status(400).send({ message: error.details[0].message });
+
+  const playlist = await Playlist.findById(req.params.id);
+  if (!playlist) return res.status(404).send({ message: "Playlist not found" });
+
+  const user = await User.findById(req.user._id);
+  if (!user._id.equals(playlist.user))
+    return res.status(403).send({ message: "User don't have access to edit" });
+
+  playlist.name = req.body.name;
+  playlist.desc = req.body.desc;
+  playlist.img = req.body.img;
+  await playlist.save();
+
+  res.status(200).send({ message: "Updated successfully" });
 });
+
+// add song tp playlist 
 
 module.exports = router;
