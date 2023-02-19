@@ -61,6 +61,12 @@ router.put("/add-song", auth, async (req, res) => {
 
   if (!user._id.equals(playlist.user))
     return res.status(403).send({ message: "User don't have access to add" });
+
+  if (playlist.songs.indexOf(req.body.songId) === -1) {
+    playlist.songs.push(req.body.songId);
+  }
+  await playlist.save();
+  res.status(200).send({ data: playlist, message: "Added to playlist " });
 });
 
 module.exports = router;
