@@ -69,4 +69,19 @@ router.put("/add-song", auth, async (req, res) => {
   res.status(200).send({ data: playlist, message: "Added to playlist " });
 });
 
+// remove song from playlist
+router.put("/remove-song", auth, async (req, res) => {
+  const schema = Joi.object({
+    playlistId: Joi.string().required(),
+    songId: Joi.string().required(),
+  });
+  const { error } = schema.validate(req.body);
+  if (error) return res.status(400).send({ message: error.details[0].message });
+
+  const user = await User.findById(req.user._id);
+  const playlist = await Playlist.findById(req.body.playlistId);
+  if (!user._id.equals(playlist.user))
+    return res.status(403).send({ message: "User don't have access to add" });
+});
+
 module.exports = router;
