@@ -126,6 +126,10 @@ router.delete("/:id", [validObjectId, auth], async (req, res) => {
       .status(403)
       .send({ message: "User don't have access to delete" });
 
-  const index = user.playlists.indexOf();
+  const index = user.playlists.indexOf(req.params.id);
+  user.playlists.splice(index, 1);
+  await user.save();
+  await playlist.remove();
+  res.status(200).send({ message: "Removed from library" });
 });
 module.exports = router;
