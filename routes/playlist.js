@@ -90,6 +90,21 @@ router.put("/remove-song", auth, async (req, res) => {
 });
 
 // user favorite playlists
-router.get("favorite", auth, async (req, res) => {});
+router.get("favorite", auth, async (req, res) => {
+  const user = await User.findById(req.user._id);
+  const playlist = await Playlist.find({ _id: user.playlist });
+  res.status(200).send({ data: playlist });
+});
 
+// get random  playlists
+router.fet("/random", auth, async (req, res) => {
+  const playlist = await Playlist.aggregate([{ $sample: { size: 10 } }]);
+  res.status(200).send({ data: playlist });
+});
+
+// get playlist by id and songs
+router.get("/:id", [validObjectId, auth], async (req, res) => {
+  const playlist = await Playlist.findById(req.params.id);
+  if (!playlist) return res.status(404).send("not found");
+});
 module.exports = router;
