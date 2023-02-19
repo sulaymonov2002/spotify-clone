@@ -82,6 +82,14 @@ router.put("/remove-song", auth, async (req, res) => {
   const playlist = await Playlist.findById(req.body.playlistId);
   if (!user._id.equals(playlist.user))
     return res.status(403).send({ message: "User don't have access to add" });
+
+  const index = playlist.songs.indexOf(req.body.songId);
+  playlist.songs.splice(index, 1);
+  await playlist.save();
+  res.status(200).send({ data: playlist, message: "Removed from playlist" });
 });
+
+// user favorite playlists
+router.get("favorite", auth, async (req, res) => {});
 
 module.exports = router;
