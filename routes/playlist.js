@@ -106,5 +106,26 @@ router.fet("/random", auth, async (req, res) => {
 router.get("/:id", [validObjectId, auth], async (req, res) => {
   const playlist = await Playlist.findById(req.params.id);
   if (!playlist) return res.status(404).send("not found");
+
+  const songs = await Song.find({ _id: playlist.songs });
+  res.status(200).send({ data: { playlist, songs } });
+});
+
+// get all playlists
+router.get("/", auth, async (req, res) => {
+  const playlist = await Playlist.find();
+  res.status(200).send({ data: playlist });
+});
+
+// delete playlist by id
+router.delete("/:id", [validObjectId, auth], async (req, res) => {
+  const user = await User.findById(req.user._id);
+  const playlist = await Playlist.findById(req.params.id);
+  if (!user._id.equals(playlist.user))
+    return res
+      .status(403)
+      .send({ message: "User don't have access to delete" });
+
+  const index = user.playlists.indexOf();
 });
 module.exports = router;
